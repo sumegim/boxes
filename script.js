@@ -54,7 +54,7 @@ var createScene = function() {
     setupUIManager(scene, sprite1, sprite2, camera);
 
     // Load fish models
-    // loadFishModels(scene);
+    loadFishModels(scene);
 
     // Load HDRI environment texture
     var hdrTexture = new BABYLON.HDRCubeTexture("textures/hdri/studio_country_hall_4k.hdr", scene, 512, false, true, BABYLON.Texture.BILINEAR_SAMPLINGMODE, function() {
