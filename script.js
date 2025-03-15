@@ -1,5 +1,7 @@
+// Get the canvas element
 var canvas = document.getElementById("renderCanvas");
 
+// Function to start the render loop
 var startRenderLoop = function (engine, canvas) {
     engine.runRenderLoop(function () {
         if (sceneToRender && sceneToRender.activeCamera) {
@@ -8,22 +10,54 @@ var startRenderLoop = function (engine, canvas) {
     });
 }
 
+// Initialize engine and scene variables
 var engine = null;
 var scene = null;
 var sceneToRender = null;
-var createDefaultEngine = function() { return new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true,  disableWebGL2Support: false}); };
+
+// Function to create the default engine
+var createDefaultEngine = function() { 
+    return new BABYLON.Engine(canvas, true, { 
+        preserveDrawingBuffer: true, 
+        stencil: true,  
+        disableWebGL2Support: false
+    }); 
+};
+
+// Function to create the scene
 var createScene = function() {
     var scene = new BABYLON.Scene(engine);
 
+    // Add a hemispheric light
     var light = new BABYLON.HemisphericLight("HemiLight", new BABYLON.Vector3(0, 2, 0), scene);
 
+    // Add an arc rotate camera
     var camera = new BABYLON.ArcRotateCamera("Camera", - Math.PI / 1.5, Math.PI / 3, 4, BABYLON.Vector3.Zero(), scene);
-
     camera.attachControl(canvas, true);
 
+    // Enable depth renderer
     var renderer = scene.enableDepthRenderer(camera, true);    
 
-    BABYLON.Effect.ShadersStore["customVertexShader"]= `   
+    // Custom shaders
+    setupCustomShaders();
+
+    // Create boxes
+    createBox(scene, "box", "textures/crate.png", new BABYLON.Vector3(0, 0, 0));
+    createBox(scene, "box2", "textures/crate.png", new BABYLON.Vector3(1.5, 0, 2));
+
+    // Create sprites
+    var sprite1 = createSprite(scene, renderer, "1", new BABYLON.Vector3(1.0, 0, 0));
+    var sprite2 = createSprite(scene, renderer, "56", new BABYLON.Vector3(0, 0.5, 1.0));
+
+    // Setup UI manager and buttons
+    setupUIManager(scene, sprite1, sprite2, camera);
+
+    return scene;
+}
+
+// Function to setup custom shaders
+function setupCustomShaders() {
+    BABYLON.Effect.ShadersStore["customVertexShader"] = `   
         precision highp float;
         attribute vec3 position;
         attribute vec2 uv;
@@ -34,7 +68,7 @@ var createScene = function() {
             vUV = uv;
         }`;
 
-    BABYLON.Effect.ShadersStore["customFragmentShader"]=`
+    BABYLON.Effect.ShadersStore["customFragmentShader"] = `
         precision highp float;
         varying vec2 vUV;
         uniform vec2 screenSize;
@@ -50,44 +84,32 @@ var createScene = function() {
             float plop = distanceToCenter < 0.45 ? 1.0 : .8;
             gl_FragColor = vec4(texture2D(textureSampler, vUV).xyz * plop, a);
         }`;
+}
 
-    // Box1
-    var boxMaterial = new BABYLON.StandardMaterial("box", scene);
+// Function to create a box
+function createBox(scene, name, texturePath, position) {
+    var boxMaterial = new BABYLON.StandardMaterial(name, scene);
+    boxMaterial.diffuseTexture = new BABYLON.Texture(texturePath, scene);
 
-    boxMaterial.diffuseTexture = new BABYLON.Texture("textures/crate.png", scene);
+    var box = BABYLON.MeshBuilder.CreateBox(name, {}, scene);
+    box.material = boxMaterial;
+    box.position = position;
+}
 
-    var box = BABYLON.MeshBuilder.CreateBox("box", {}, scene);
-
-    box.material = boxMaterial;            
-
-    // Box2
-    var box2Material = new BABYLON.StandardMaterial("box2", scene);
-
-    box2Material.diffuseTexture = new BABYLON.Texture("textures/crate.png", scene);
-
-    var box2 = BABYLON.MeshBuilder.CreateBox("box2", {}, scene);
-
-    box2.material = box2Material;            
-    box2.position.x = 1.5;
-    box2.position.z = 2;
-
-    var DTWidth = 256 * 60;
-    var DTHeight = 256 * 60;
-
+// Function to create a sprite
+function createSprite(scene, renderer, text, position) {
     var tex = new BABYLON.DynamicTexture("name", {width: 256, height: 256}, scene);
     var font = "bold 124px monospace";
-    tex.drawText("1", null, null, font, "black", "white", true, true);
+    tex.drawText(text, null, null, font, "black", "white", true, true);
 
-    // Sprite1
     var spriteMaterial = new BABYLON.ShaderMaterial("mat", scene, {
         vertex: "custom",
         fragment: "custom",
-        },
-        {
-            attributes: ["position", "uv"],
-            uniforms: ["worldViewProjection", "screenSize"],
-            needAlphaBlending: true
-        });
+    }, {
+        attributes: ["position", "uv"],
+        uniforms: ["worldViewProjection", "screenSize"],
+        needAlphaBlending: true
+    });
 
     spriteMaterial.setTexture("depth", renderer.getDepthMap());
     spriteMaterial.setTexture("textureSampler", tex);
@@ -95,85 +117,64 @@ var createScene = function() {
     spriteMaterial.disableDepthWrite = true;
     spriteMaterial.alphaMode = BABYLON.Engine.ALPHA_COMBINE;
 
-    var tex2 = new BABYLON.DynamicTexture("name", {width: 256, height: 256}, scene);
-    var font2 = "bold 124px monospace";
-    tex2.drawText("56", null, null, font2, "black", "white", true, true);
-
-    // Sprite1
-    var spriteMaterial2 = new BABYLON.ShaderMaterial("mat", scene, {
-        vertex: "custom",
-        fragment: "custom",
-        },
-        {
-            attributes: ["position", "uv"],
-            uniforms: ["worldViewProjection", "screenSize"],
-            needAlphaBlending: true
-        });
-
-    spriteMaterial2.setTexture("depth", renderer.getDepthMap());
-    spriteMaterial2.setTexture("textureSampler", tex2);
-    spriteMaterial2.backFaceCulling = false;
-    spriteMaterial2.disableDepthWrite = true;
-    spriteMaterial2.alphaMode = BABYLON.Engine.ALPHA_COMBINE;
-
-    var sprite = new BABYLON.MeshBuilder.CreatePlane("sprite", { size:.3, sideOrientation: BABYLON.Mesh.BACKSIDE }, scene);
-
+    var sprite = new BABYLON.MeshBuilder.CreatePlane("sprite", { size: 0.3, sideOrientation: BABYLON.Mesh.BACKSIDE }, scene);
     sprite.material = spriteMaterial;
-    sprite.position.x = 1.0;
+    sprite.position = position;
 
-    // Sprite2
-    var sprite2 = new BABYLON.MeshBuilder.CreatePlane("sprite", { size:0.3 }, scene);
+    return sprite;
+}
 
-    sprite2.material = spriteMaterial2;
-    sprite2.position.y = 0.5;
-    sprite2.position.z = 1.0;
-
-    var dt = engine.getDepthFunction();
-
-    // Create the 3D UI manager
+// Function to setup UI manager and buttons
+function setupUIManager(scene, sprite1, sprite2, camera) {
     var manager = new BABYLON.GUI.GUI3DManager(scene);
 
-    var pushButton = new BABYLON.GUI.MeshButton3D(sprite, "pushButton1");
-    pushButton.onPointerClickObservable.add((e)=>{
+    var pushButton1 = new BABYLON.GUI.MeshButton3D(sprite1, "pushButton1");
+    pushButton1.onPointerClickObservable.add(() => {
         console.log('PushButton1 pushed!');
-        showFloatingMessage("Hello World", scene, sprite.position, camera);
+        showFloatingMessage("Hello World", scene, sprite1.position, camera);
     });
-    pushButton.onPointerEnterObservable.add((e)=>{
-        tex.drawText("1", null, null, font, "black", "red", true, true);
+    pushButton1.onPointerEnterObservable.add(() => {
+        sprite1.material.setTexture("textureSampler", createDynamicTexture(scene, "1", "red"));
     });
-
-    pushButton.onPointerOutObservable.add((e)=>{
-        tex.drawText("1", null, null, font, "black", "white", true, true);
+    pushButton1.onPointerOutObservable.add(() => {
+        sprite1.material.setTexture("textureSampler", createDynamicTexture(scene, "1", "white"));
     });
-    manager.addControl(pushButton);
+    manager.addControl(pushButton1);
 
     var pushButton2 = new BABYLON.GUI.MeshButton3D(sprite2, "pushButton2");
-    pushButton2.onPointerClickObservable.add((e)=>{
-        console.log('PushButton2 pushed!')
+    pushButton2.onPointerClickObservable.add(() => {
+        console.log('PushButton2 pushed!');
     });
     manager.addControl(pushButton2);
 
     scene.onBeforeRenderObservable.add(() => {
-        spriteMaterial.setVector2("screenSize", new BABYLON.Vector2(engine.getRenderWidth(), engine.getRenderHeight()));
+        sprite1.material.setVector2("screenSize", new BABYLON.Vector2(engine.getRenderWidth(), engine.getRenderHeight()));
     });
 
-    [sprite, sprite2].forEach((spr) => {
-        spr.onBeforeRenderObservable.add(() => {
-            var pos = spr.position.clone();
-            pos.multiplyInPlace(new BABYLON.Vector3(2,2,2));
+    [sprite1, sprite2].forEach((sprite) => {
+        sprite.onBeforeRenderObservable.add(() => {
+            var pos = sprite.position.clone();
+            pos.multiplyInPlace(new BABYLON.Vector3(2, 2, 2));
             pos = pos.subtract(camera.position.clone());
-            spr.lookAt(pos);
+            sprite.lookAt(pos);
             engine.setDepthFunction(BABYLON.Engine.ALWAYS);
         });
 
-        spr.onAfterRenderObservable.add(() => {
-            engine.setDepthFunction(dt);
+        sprite.onAfterRenderObservable.add(() => {
+            engine.setDepthFunction(BABYLON.Engine.LEQUAL);
         });
     });
-
-    return scene;
 }
 
+// Function to create a dynamic texture
+function createDynamicTexture(scene, text, color) {
+    var tex = new BABYLON.DynamicTexture("dynamicTexture", {width: 256, height: 256}, scene);
+    var font = "bold 124px monospace";
+    tex.drawText(text, null, null, font, "black", color, true, true);
+    return tex;
+}
+
+// Function to show a floating message
 function showFloatingMessage(message, scene, position, camera) {
     var tex = new BABYLON.DynamicTexture("messageTexture", {width: 512, height: 256}, scene);
     var font = "bold 44px monospace";
@@ -197,29 +198,28 @@ function showFloatingMessage(message, scene, position, camera) {
     }, 2000);
 }
 
+// Initialize the engine and create the scene
 window.initFunction = async function() {
     var asyncEngineCreation = async function() {
         try {
             return createDefaultEngine();
         } catch(e) {
-            console.log("the available createEngine function failed. Creating the default engine instead");
+            console.log("The available createEngine function failed. Creating the default engine instead");
             return createDefaultEngine();
         }
     }
 
     window.engine = await asyncEngineCreation();
 
-    const engineOptions = window.engine.getCreationOptions();
-    if (engineOptions.audioEngine !== false) {
-        
-    }
-    if (!engine) throw 'engine should not be null.';
+    if (!engine) throw 'Engine should not be null.';
     startRenderLoop(engine, canvas);
     window.scene = createScene();
 };
-initFunction().then(() => {sceneToRender = scene});
 
-// Resize
+// Start the initialization
+initFunction().then(() => { sceneToRender = scene; });
+
+// Resize the engine on window resize
 window.addEventListener("resize", function () {
     engine.resize();
 });
