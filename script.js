@@ -30,6 +30,7 @@ var createScene = function() {
 
     // Add a hemispheric light
     var light = new BABYLON.HemisphericLight("HemiLight", new BABYLON.Vector3(0, 2, 0), scene);
+    light.intensity = 1.0; // Adjust the light intensity if needed
 
     // Add an arc rotate camera
     var camera = new BABYLON.ArcRotateCamera("Camera", - Math.PI / 1.5, Math.PI / 3, 4, BABYLON.Vector3.Zero(), scene);
@@ -54,6 +55,11 @@ var createScene = function() {
 
     // Load fish models
     loadFishModels(scene);
+
+    // Load HDRI environment texture
+    var hdrTexture = new BABYLON.HDRCubeTexture("textures/hdri/studio_country_hall_4k.exr", scene, 512);
+    hdrTexture.level = 0.5; // Adjust the intensity of the HDRI texture
+    scene.environmentTexture = hdrTexture;
 
     return scene;
 }
