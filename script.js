@@ -53,8 +53,15 @@ var createScene = function() {
     // Setup UI manager and buttons
     setupUIManager(scene, sprite1, sprite2, camera);
 
+    // Load fish models
+    // loadFishModels(scene);
+
     // Load HDRI environment texture
-    var hdrTexture = new BABYLON.HDRCubeTexture("textures/hdri/studio_country_hall_4k.exr", scene, 512);
+    var hdrTexture = new BABYLON.HDRCubeTexture("textures/hdri/studio_country_hall_4k.hdr", scene, 512, false, true, BABYLON.Texture.BILINEAR_SAMPLINGMODE, function() {
+        console.log("HDRI texture loaded successfully");
+    }, function(message) {
+        console.error("Failed to load HDRI texture: " + message);
+    });
     hdrTexture.level = 1.0; // Adjust the intensity of the HDRI texture
     scene.environmentTexture = hdrTexture;
 
@@ -67,9 +74,6 @@ var createScene = function() {
     skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
     skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
     skybox.material = skyboxMaterial;
-
-    // // Load fish models
-    // loadFishModels(scene);
 
     return scene;
 }
