@@ -47,8 +47,8 @@ var createScene = function() {
     // createBox(scene, "box2", "textures/crate.png", new BABYLON.Vector3(-1.5, 0, -2));
 
     // Create sprites
-    var sprite1 = createSprite(scene, renderer, "1", new BABYLON.Vector3(-0.5, 0.2, -0.2));
-    var sprite2 = createSprite(scene, renderer, "56", new BABYLON.Vector3(0, -0.6, -0.8));
+    var sprite1 = createSprite(scene, renderer, "1", new BABYLON.Vector3(0, -0.6, -0.8));
+    var sprite2 = createSprite(scene, renderer, "56", new BABYLON.Vector3(-0.5, 0.2, -0.2));
 
     // Setup UI manager and buttons
     setupUIManager(scene, sprite1, sprite2, camera);
