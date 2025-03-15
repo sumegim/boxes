@@ -52,6 +52,9 @@ var createScene = function() {
     // Setup UI manager and buttons
     setupUIManager(scene, sprite1, sprite2, camera);
 
+    // Load fish models
+    loadFishModels(scene);
+
     return scene;
 }
 
@@ -196,6 +199,21 @@ function showFloatingMessage(message, scene, position, camera) {
     setTimeout(() => {
         messageSprite.dispose();
     }, 2000);
+}
+
+// Function to load fish models
+function loadFishModels(scene) {
+    var assetsManager = new BABYLON.AssetsManager(scene);
+
+    var fishTask = assetsManager.addMeshTask("fish task", "", "https://assets.babylonjs.com/meshes/", "fish.glb");
+    fishTask.onSuccess = function (task) {
+        task.loadedMeshes.forEach(function (mesh) {
+            mesh.position = new BABYLON.Vector3(-2, -2, -2);
+            mesh.scaling = new BABYLON.Vector3(0.5, 0.5, 0.5);
+        });
+    };
+
+    assetsManager.load();
 }
 
 // Initialize the engine and create the scene
