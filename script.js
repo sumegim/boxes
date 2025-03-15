@@ -53,13 +53,23 @@ var createScene = function() {
     // Setup UI manager and buttons
     setupUIManager(scene, sprite1, sprite2, camera);
 
-    // Load fish models
-    loadFishModels(scene);
-
     // Load HDRI environment texture
     var hdrTexture = new BABYLON.HDRCubeTexture("textures/hdri/studio_country_hall_4k.exr", scene, 512);
-    hdrTexture.level = 0.5; // Adjust the intensity of the HDRI texture
+    hdrTexture.level = 1.0; // Adjust the intensity of the HDRI texture
     scene.environmentTexture = hdrTexture;
+
+    // Create a skybox to visualize the HDRI texture
+    var skybox = BABYLON.Mesh.CreateBox("skyBox", 1000.0, scene);
+    var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
+    skyboxMaterial.backFaceCulling = false;
+    skyboxMaterial.reflectionTexture = hdrTexture.clone();
+    skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
+    skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
+    skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+    skybox.material = skyboxMaterial;
+
+    // // Load fish models
+    // loadFishModels(scene);
 
     return scene;
 }
