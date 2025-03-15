@@ -43,37 +43,57 @@ var createScene = function() {
     setupCustomShaders();
 
     // Create boxes
-    createBox(scene, "box", "textures/crate.png", new BABYLON.Vector3(0, 0, 0));
-    createBox(scene, "box2", "textures/crate.png", new BABYLON.Vector3(1.5, 0, 2));
+    createBox(scene, "box", "textures/crate.png", new BABYLON.Vector3(0, -1, 0));
+    // createBox(scene, "box2", "textures/crate.png", new BABYLON.Vector3(-1.5, 0, -2));
 
     // Create sprites
-    var sprite1 = createSprite(scene, renderer, "1", new BABYLON.Vector3(1.0, 0, 0));
-    var sprite2 = createSprite(scene, renderer, "56", new BABYLON.Vector3(0, 0.5, 1.0));
+    var sprite1 = createSprite(scene, renderer, "1", new BABYLON.Vector3(-0.5, 0.2, -0.2));
+    var sprite2 = createSprite(scene, renderer, "56", new BABYLON.Vector3(0, -0.6, -0.8));
 
     // Setup UI manager and buttons
     setupUIManager(scene, sprite1, sprite2, camera);
 
     // Load fish models
-    loadFishModels(scene);
+    // loadFishModels(scene);
 
     // Load HDRI environment texture
-    var hdrTexture = new BABYLON.HDRCubeTexture("textures/hdri/studio_country_hall_4k.hdr", scene, 512, false, true, BABYLON.Texture.BILINEAR_SAMPLINGMODE, function() {
-        console.log("HDRI texture loaded successfully");
-    }, function(message) {
-        console.error("Failed to load HDRI texture: " + message);
-    });
-    hdrTexture.level = 1.0; // Adjust the intensity of the HDRI texture
-    scene.environmentTexture = hdrTexture;
+    // var hdrTexture = new BABYLON.HDRCubeTexture("textures/hdri/studio_country_hall_4k.hdr", scene, 512, false, true, BABYLON.Texture.BILINEAR_SAMPLINGMODE, function() {
+    //     console.log("HDRI texture loaded successfully");
+    // }, function(message) {
+    //     console.error("Failed to load HDRI texture: " + message);
+    // });
+    // hdrTexture.level = 1.0; // Adjust the intensity of the HDRI texture
+    // scene.environmentTexture = hdrTexture;
 
-    // Create a skybox to visualize the HDRI texture
-    var skybox = BABYLON.Mesh.CreateBox("skyBox", 1000.0, scene);
-    var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
-    skyboxMaterial.backFaceCulling = false;
-    skyboxMaterial.reflectionTexture = hdrTexture.clone();
-    skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
-    skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
-    skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
-    skybox.material = skyboxMaterial;
+    // // Create a skybox to visualize the HDRI texture
+    // var skybox = BABYLON.Mesh.CreateBox("skyBox", 1000.0, scene);
+    // var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
+    // skyboxMaterial.backFaceCulling = false;
+    // skyboxMaterial.reflectionTexture = hdrTexture.clone();
+    // skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
+    // skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
+    // skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+    // skybox.material = skyboxMaterial;
+
+    BABYLON.SceneLoader.ImportMesh(
+        "",
+        "objects/",
+        "pawn.obj",
+        scene,
+        function (meshes) {
+            // The meshes array contains all the loaded meshes
+            console.log("Meshes loaded:", meshes);
+            meshes.forEach(function (mesh) {
+                mesh.scaling = new BABYLON.Vector3(0.2, 0.2, 0.2); // Scale to 20%
+                mesh.position = new BABYLON.Vector3(0, -0.55, 0);
+                mesh.rotation = new BABYLON.Vector3(0, Math.PI, 0);
+            });
+        },
+        null,
+        function (scene, message, exception) {
+            console.error("An error occurred while loading the object file:", message, exception);
+        }
+    );
 
     return scene;
 }
