@@ -30,7 +30,7 @@ var createScene = function() {
 
     // Add a hemispheric light
     var light = new BABYLON.HemisphericLight("HemiLight", new BABYLON.Vector3(0, 2, 0), scene);
-    light.intensity = 1.0; // Adjust the light intensity if needed
+    light.intensity = 2.0; // Adjust the light intensity if needed
 
     // Add an arc rotate camera
     var camera = new BABYLON.ArcRotateCamera("Camera", - Math.PI / 1.5, Math.PI / 3, 4, BABYLON.Vector3.Zero(), scene);
@@ -87,6 +87,15 @@ var createScene = function() {
                 mesh.scaling = new BABYLON.Vector3(0.2, 0.2, 0.2); // Scale to 20%
                 mesh.position = new BABYLON.Vector3(0, -0.55, 0);
                 mesh.rotation = new BABYLON.Vector3(0, Math.PI, 0);
+
+                // Create a PBR material for the mesh
+                var pbr = new BABYLON.PBRMaterial("pawnMat", scene);
+                pbr.metallic = 1.0; // Fully metallic
+                pbr.roughness = 0.4; // Adjust roughness as needed
+                pbr.albedoColor = new BABYLON.Color3(0.8, 0.1, 0.2); // Base color
+                pbr.reflectivityColor = new BABYLON.Color3(1, 1, 1); // Reflectivity color
+
+                mesh.material = pbr;
             });
         },
         null,
