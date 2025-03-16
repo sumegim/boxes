@@ -10,18 +10,13 @@ export function createScene(engine, canvas) {
     const scene = new BABYLON.Scene(engine);
 
     // Add a hemispheric light
-    const light = new BABYLON.HemisphericLight("HemiLight", new BABYLON.Vector3(0, 2, 0), scene);
+    const light = new BABYLON.HemisphericLight("HemiLight", new BABYLON.Vector3(15, 20, 0), scene);
     light.intensity = 2.0;
 
     // Add an arc rotate camera
     const camera = new BABYLON.ArcRotateCamera("Camera", -Math.PI / 1.5, Math.PI / 3, 4, BABYLON.Vector3.Zero(), scene);
     camera.attachControl(canvas, true);
     camera.wheelPrecision = 400;
-
-    // Create a board side bird's eye view camera
-    const birdEyeCamera = new BABYLON.ArcRotateCamera("BirdEyeCamera", -Math.PI / 2, Math.PI / 3, 20, BABYLON.Vector3.Zero(), scene);
-    birdEyeCamera.attachControl(canvas, false); // Disable camera controls
-    birdEyeCamera.wheelPrecision = 400;
 
     // Enable depth renderer
     const renderer = scene.enableDepthRenderer(camera, true);
@@ -34,7 +29,6 @@ export function createScene(engine, canvas) {
 
     // Add cameras to the world
     world.addCamera("mainCamera", camera);
-    world.addCamera("birdEyeCamera", birdEyeCamera);
 
     // Create chessboard
     createChessboard(scene, world);
@@ -52,14 +46,20 @@ export function createScene(engine, canvas) {
     // Setup UI manager and buttons
     setupUIManager(world);
 
-    // Add event listener to switch cameras
+    // Add event listener to switch camera positions
     window.addEventListener('keydown', (event) => {
         switch (event.key) {
             case '1':
-                scene.activeCamera = camera;
+                // Main camera position
+                camera.setPosition(new BABYLON.Vector3(4, 4, 4));
+                camera.setTarget(BABYLON.Vector3.Zero());
+                camera.attachControl(canvas, true);
                 break;
             case '2':
-                scene.activeCamera = birdEyeCamera;
+                // Bird's eye view position
+                camera.setPosition(new BABYLON.Vector3(0, 20, 0));
+                camera.setTarget(BABYLON.Vector3.Zero());
+                camera.detachControl(canvas); // Disable camera controls
                 break;
         }
     });
