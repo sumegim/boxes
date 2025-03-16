@@ -1,9 +1,27 @@
 let isAnimating = false;
+let inputQueue = [];
 
 export function handlePlayerMovement(direction, camera, meshes) {
-    if (isAnimating) return;
+    inputQueue.push({ direction, camera, meshes });
+    if (!isAnimating) {
+        processInputQueue();
+    }
+}
 
+function processInputQueue() {
+    if (inputQueue.length === 0) return;
+
+    // Check for direction change
+    // const currentInput = inputQueue[0];
+    // const nextInput = inputQueue[1];
+    // if (nextInput && currentInput.direction !== nextInput.direction) {
+    //     // Clear previous inputs if a direction change is detected
+    //     inputQueue = inputQueue.slice(1);
+    // }
+
+    const { direction, camera, meshes } = inputQueue.shift();
     const stepSize = 1; // Size of a grid cell
+
     if (meshes.pawnMesh && meshes.kingMesh) {
         const forward = camera.getForwardRay().direction;
         const right = BABYLON.Vector3.Cross(forward, BABYLON.Axis.Y).normalize();
@@ -133,6 +151,12 @@ function animateMesh(mesh, targetRotation, targetPosition) {
     positionKeys.push({ frame: frameRate, value: targetPosition });
     positionAnimation.setKeys(positionKeys);
 
+    // Apply easing function for smoother animations
+    const easingFunction = new BABYLON.QuadraticEase();
+    easingFunction.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEINOUT);
+    rotationAnimation.setEasingFunction(easingFunction);
+    positionAnimation.setEasingFunction(easingFunction);
+
     // Apply animations
     mesh.animations = [];
     mesh.animations.push(rotationAnimation);
@@ -145,5 +169,6 @@ function animateMesh(mesh, targetRotation, targetPosition) {
         mesh.position.x = Math.round(mesh.position.x);
         mesh.position.z = Math.round(mesh.position.z);
         isAnimating = false;
+        setTimeout(processInputQueue, 50); // Add a slight delay before processing the next input
     });
 }
