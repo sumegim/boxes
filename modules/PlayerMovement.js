@@ -27,61 +27,61 @@ export function handlePlayerMovement(direction, camera, meshes) {
         switch (direction) {
             case 'up':
                 if (moveDirection === 'x+') {
-                    targetRotation.y = 0;
+                    targetRotation.y = Math.PI / 2;
                     targetPosition.x += stepSize;
                 } else if (moveDirection === 'x-') {
-                    targetRotation.y = Math.PI;
+                    targetRotation.y = -Math.PI / 2;
                     targetPosition.x -= stepSize;
                 } else if (moveDirection === 'z+') {
-                    targetRotation.y = Math.PI / 2;
+                    targetRotation.y = 0;
                     targetPosition.z += stepSize;
                 } else if (moveDirection === 'z-') {
-                    targetRotation.y = -Math.PI / 2;
+                    targetRotation.y = Math.PI;
                     targetPosition.z -= stepSize;
                 }
                 break;
             case 'down':
                 if (moveDirection === 'x+') {
-                    targetRotation.y = Math.PI;
+                    targetRotation.y = -Math.PI / 2;
                     targetPosition.x -= stepSize;
                 } else if (moveDirection === 'x-') {
-                    targetRotation.y = 0;
+                    targetRotation.y = Math.PI / 2;
                     targetPosition.x += stepSize;
                 } else if (moveDirection === 'z+') {
-                    targetRotation.y = -Math.PI / 2;
+                    targetRotation.y = Math.PI;
                     targetPosition.z -= stepSize;
                 } else if (moveDirection === 'z-') {
-                    targetRotation.y = Math.PI / 2;
+                    targetRotation.y = 0;
                     targetPosition.z += stepSize;
                 }
                 break;
             case 'left':
                 if (moveDirection === 'x+') {
-                    targetRotation.y = Math.PI / 2;
+                    targetRotation.y = 0;
                     targetPosition.z += stepSize;
                 } else if (moveDirection === 'x-') {
-                    targetRotation.y = -Math.PI / 2;
+                    targetRotation.y = Math.PI;
                     targetPosition.z -= stepSize;
                 } else if (moveDirection === 'z+') {
-                    targetRotation.y = Math.PI;
+                    targetRotation.y = -Math.PI / 2;
                     targetPosition.x -= stepSize;
                 } else if (moveDirection === 'z-') {
-                    targetRotation.y = 0;
+                    targetRotation.y = Math.PI / 2;
                     targetPosition.x += stepSize;
                 }
                 break;
             case 'right':
                 if (moveDirection === 'x+') {
-                    targetRotation.y = -Math.PI / 2;
+                    targetRotation.y = Math.PI;
                     targetPosition.z -= stepSize;
                 } else if (moveDirection === 'x-') {
-                    targetRotation.y = Math.PI / 2;
+                    targetRotation.y = 0;
                     targetPosition.z += stepSize;
                 } else if (moveDirection === 'z+') {
-                    targetRotation.y = 0;
+                    targetRotation.y = Math.PI / 2;
                     targetPosition.x += stepSize;
                 } else if (moveDirection === 'z-') {
-                    targetRotation.y = Math.PI;
+                    targetRotation.y = -Math.PI / 2;
                     targetPosition.x -= stepSize;
                 }
                 break;
