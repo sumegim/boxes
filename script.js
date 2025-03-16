@@ -14,6 +14,8 @@ var startRenderLoop = function (engine, canvas) {
 var engine = null;
 var scene = null;
 var sceneToRender = null;
+var pawnMesh = null;
+var kingMesh = null;
 
 // Function to create the default engine
 var createDefaultEngine = function() { 
@@ -30,6 +32,8 @@ var createScene = function() {
 
     // Add a hemispheric light
     var light = new BABYLON.HemisphericLight("HemiLight", new BABYLON.Vector3(0, 2, 0), scene);
+    // var light = new BABYLON.PointLight("Omni", new BABYLON.Vector3(0, 2, 0), scene);
+
     light.intensity = 2.0; // Adjust the light intensity if needed
 
     // Add an arc rotate camera
@@ -78,34 +82,51 @@ var createScene = function() {
     // skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
     // skybox.material = skyboxMaterial;
 
-    BABYLON.SceneLoader.ImportMesh(
-        "",
-        "objects/",
-        "pawn.obj",
-        scene,
-        function (meshes) {
-            // The meshes array contains all the loaded meshes
-            console.log("Meshes loaded:", meshes);
-            meshes.forEach(function (mesh) {
-                mesh.scaling = new BABYLON.Vector3(0.2, 0.2, 0.2); // Scale to 20%
-                mesh.position = new BABYLON.Vector3(0, -0.55, 0);
-                mesh.rotation = new BABYLON.Vector3(0, Math.PI, 0);
+    // Load assets using AssetsManager
+    var assetsManager = new BABYLON.AssetsManager(scene);
 
-                // Create a PBR material for the mesh
-                var pbr = new BABYLON.PBRMaterial("pawnMat", scene);
-                pbr.metallic = 1.0; // Fully metallic
-                pbr.roughness = 0.45; // Adjust roughness as needed
-                pbr.albedoColor = new BABYLON.Color3(1, 0.6, 0.7);
-                pbr.reflectivityColor = new BABYLON.Color3(1, 1, 1); // Reflectivity color
+    var pawnTask = assetsManager.addMeshTask("pawn task", "", "objects/", "pawn.obj");
+    pawnTask.onSuccess = function (task) {
+        pawnMesh = task.loadedMeshes[0];
+        pawnMesh.scaling = new BABYLON.Vector3(0.2, 0.2, 0.2);
+        pawnMesh.position = new BABYLON.Vector3(0, -0.55, 0);
+        pawnMesh.rotation = new BABYLON.Vector3(0, Math.PI, 0);
 
-                mesh.material = pbr;
-            });
-        },
-        null,
-        function (scene, message, exception) {
-            console.error("An error occurred while loading the object file:", message, exception);
+        var pbr = new BABYLON.PBRMaterial("pawnMat", scene);
+        pbr.metallic = 1.0;
+        pbr.roughness = 0.45;
+        pbr.albedoColor = new BABYLON.Color3(1, 0.6, 0.7);
+        pbr.reflectivityColor = new BABYLON.Color3(1, 1, 1);
+        pawnMesh.material = pbr;
+    };
+
+    var kingTask = assetsManager.addMeshTask("king task", "", "objects/", "king.obj");
+    kingTask.onSuccess = function (task) {
+        kingMesh = task.loadedMeshes[0];
+        kingMesh.scaling = new BABYLON.Vector3(0.2, 0.2, 0.2);
+        kingMesh.position = new BABYLON.Vector3(0, -0.55, 0);
+        kingMesh.rotation = new BABYLON.Vector3(0, Math.PI, 0);
+        kingMesh.isVisible = false;
+
+        var pbr = new BABYLON.PBRMaterial("kingMat", scene);
+        pbr.metallic = 1.0;
+        pbr.roughness = 0.45;
+        pbr.albedoColor = new BABYLON.Color3(1, 0.6, 0.7);
+        pbr.reflectivityColor = new BABYLON.Color3(1, 1, 1);
+        kingMesh.material = pbr;
+    };
+
+    assetsManager.load();
+
+    // Add event listener for the "R" button
+    window.addEventListener("keydown", function (event) {
+        if (event.key === "R" || event.key === "r") {
+            if (pawnMesh && kingMesh) {
+                pawnMesh.isVisible = !pawnMesh.isVisible;
+                kingMesh.isVisible = !kingMesh.isVisible;
+            }
         }
-    );
+    });
 
     return scene;
 }
@@ -202,7 +223,10 @@ function setupUIManager(scene, sprite1, sprite2, camera) {
     pushButton2.onPointerClickObservable.add(() => {
         console.log('PushButton2 pushed!');
         // showFloatingMessage("Hello World", scene, sprite2.position, camera);
-        
+        if (pawnMesh && kingMesh) {
+            pawnMesh.isVisible = !pawnMesh.isVisible;
+            kingMesh.isVisible = !kingMesh.isVisible;
+        }
     });
     manager.addControl(pushButton2);
 
