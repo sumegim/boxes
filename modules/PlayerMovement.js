@@ -12,12 +12,12 @@ function processInputQueue() {
     if (inputQueue.length === 0) return;
 
     // Check for direction change
-    // const currentInput = inputQueue[0];
-    // const nextInput = inputQueue[1];
-    // if (nextInput && currentInput.direction !== nextInput.direction) {
-    //     // Clear previous inputs if a direction change is detected
-    //     inputQueue = inputQueue.slice(1);
-    // }
+    const currentInput = inputQueue[0];
+    const nextInput = inputQueue[1];
+    if (nextInput && currentInput.direction !== nextInput.direction) {
+        // Clear previous inputs if a direction change is detected
+        inputQueue = inputQueue.slice(1);
+    }
 
     const { direction, camera, meshes } = inputQueue.shift();
     const stepSize = 1; // Size of a grid cell
@@ -111,8 +111,8 @@ function processInputQueue() {
 }
 
 function animateMesh(mesh, targetRotation, targetPosition) {
-    const frameRate = 60; // Reduce frame rate for faster animations
-    const animationSpeed = 6; // Increase speed multiplier for snappier animations
+    const frameRate = 60; // Frame rate for animations
+    const animationSpeed = 6; // Speed multiplier for animations
 
     // Calculate shortest rotation
     const currentRotationY = mesh.rotation.y;
@@ -169,6 +169,8 @@ function animateMesh(mesh, targetRotation, targetPosition) {
         mesh.position.x = Math.round(mesh.position.x);
         mesh.position.z = Math.round(mesh.position.z);
         isAnimating = false;
-        setTimeout(processInputQueue, 10); // Add a slight delay before processing the next input
+        if (inputQueue.length > 0) {
+            processInputQueue(); // Process the next input immediately if there are more inputs
+        }
     });
 }
