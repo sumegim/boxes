@@ -6,6 +6,7 @@ export class World {
         this.sprites = [];
         this.meshes = {};
         this.boxes = [];
+        this.cameras = {};
     }
 
     addSprite(sprite) {
@@ -18,5 +19,9 @@ export class World {
 
     addBox(box) {
         this.boxes.push(box);
+    }
+
+    addCamera(name, camera) {
+        this.cameras[name] = camera;
     }
 }
