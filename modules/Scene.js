@@ -31,8 +31,8 @@ export function createScene(engine, canvas) {
     createChessboard(scene, world);
 
     // Create sprites
-    const sprite1 = createSprite(scene, renderer, "?", new BABYLON.Vector3(3.5, 0.5, -0.5));
-    const sprite2 = createSprite(scene, renderer, "R", new BABYLON.Vector3(-3.5, 0.5, -0.5));
+    const sprite1 = createSprite(scene, renderer, "?", new BABYLON.Vector3(3, 0.5, 0));
+    const sprite2 = createSprite(scene, renderer, "R", new BABYLON.Vector3(-3, 0.5, 0));
     world.addSprite(sprite1);
     world.addSprite(sprite2);
 
