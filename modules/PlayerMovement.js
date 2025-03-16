@@ -94,7 +94,16 @@ export function handlePlayerMovement(direction, camera, meshes) {
 
 function animateMesh(mesh, targetRotation, targetPosition) {
     const frameRate = 10; // Reduce frame rate for faster animations
-    const animationSpeed = 2; // Increase speed multiplier for snappier animations
+    const animationSpeed = 4; // Increase speed multiplier for snappier animations
+
+    // Calculate shortest rotation
+    const currentRotationY = mesh.rotation.y;
+    const deltaRotationY = targetRotation.y - currentRotationY;
+    if (deltaRotationY > Math.PI) {
+        targetRotation.y -= 2 * Math.PI;
+    } else if (deltaRotationY < -Math.PI) {
+        targetRotation.y += 2 * Math.PI;
+    }
 
     // Rotation animation
     const rotationAnimation = new BABYLON.Animation(
