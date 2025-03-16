@@ -29,11 +29,17 @@ export function createScene(engine, canvas) {
     const sprite1 = createSprite(scene, renderer, "?", new BABYLON.Vector3(0, -0.6, -0.8));
     const sprite2 = createSprite(scene, renderer, "R", new BABYLON.Vector3(-0.5, 0.2, -0.2));
 
-    // Setup UI manager and buttons
-    setupUIManager(scene, sprite1, sprite2, camera, engine);
-
     // Load models
-    loadModels(scene);
+    const meshes = loadModels(scene);
+
+    // Setup UI manager and buttons
+    setupUIManager({
+        scene,
+        sprites: [sprite1, sprite2],
+        camera,
+        engine,
+        meshes
+    });
 
     return scene;
 }
