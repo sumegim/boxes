@@ -1,7 +1,7 @@
 import { showFloatingMessage } from './FloatingMessage.js';
 
 export function setupUIManager(world) {
-    const { scene, camera, engine, sprites, meshes, boxes } = world;
+    const { scene, camera, engine, sprites, meshes } = world;
     const manager = new BABYLON.GUI.GUI3DManager(scene);
 
     const pushButton1 = new BABYLON.GUI.MeshButton3D(sprites[0], "pushButton1");
@@ -26,23 +26,122 @@ export function setupUIManager(world) {
     // Create a 2D GUI
     const advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
 
-    // Add a new button to move the first box
-    const moveBoxButton = BABYLON.GUI.Button.CreateSimpleButton("moveBoxButton", "Move Box");
-    moveBoxButton.width = "150px";
-    moveBoxButton.height = "40px";
-    moveBoxButton.color = "white";
-    moveBoxButton.background = "green";
-    moveBoxButton.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-    moveBoxButton.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
-    moveBoxButton.paddingRight = "10px";
-    moveBoxButton.paddingBottom = "10px";
-    moveBoxButton.onPointerClickObservable.add(() => {
-        console.log('MoveBoxButton pushed!');
-        if (boxes.length > 0) {
-            boxes[0].position.x += 1; // Move the first box along the x-axis
+    // Function to move the meshes based on camera orientation
+    const moveMesh = (direction) => {
+        const stepSize = 1; // Size of a grid cell
+        if (meshes.pawnMesh && meshes.kingMesh) {
+            const forward = camera.getForwardRay().direction;
+            const right = BABYLON.Vector3.Cross(forward, BABYLON.Axis.Y).normalize();
+
+            // Round the forward and right vectors to the nearest grid cell
+            forward.x = Math.round(forward.x);
+            forward.z = Math.round(forward.z);
+            right.x = Math.round(right.x);
+            right.z = Math.round(right.z);
+
+            switch (direction) {
+                case 'up':
+                    meshes.pawnMesh.position.z += stepSize;
+                    meshes.kingMesh.position.z += stepSize;
+                    break;
+                case 'down':
+                    meshes.pawnMesh.position.z -= stepSize;
+                    meshes.kingMesh.position.z -= stepSize;
+                    break;
+                case 'left':
+                    meshes.pawnMesh.position.x -= stepSize;
+                    meshes.kingMesh.position.x -= stepSize;
+                    break;
+                case 'right':
+                    meshes.pawnMesh.position.x += stepSize;
+                    meshes.kingMesh.position.x += stepSize;
+                    break;
+            }
+
+            // Snap the positions to the grid
+            meshes.pawnMesh.position.x = Math.round(meshes.pawnMesh.position.x);
+            meshes.pawnMesh.position.z = Math.round(meshes.pawnMesh.position.z);
+            meshes.kingMesh.position.x = Math.round(meshes.kingMesh.position.x);
+            meshes.kingMesh.position.z = Math.round(meshes.kingMesh.position.z);
+        }
+    };
+
+    // Add buttons for movement
+    const createMoveButton = (name, text, callback) => {
+        const button = BABYLON.GUI.Button.CreateSimpleButton(name, text);
+        button.width = "50px";
+        button.height = "50px";
+        button.color = "white";
+        button.background = "blue";
+        button.onPointerClickObservable.add(callback);
+        return button;
+    };
+
+    const moveUpButton = createMoveButton("moveUpButton", "↑", () => moveMesh('up'));
+    moveUpButton.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+    moveUpButton.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+    moveUpButton.left = "60px";
+    moveUpButton.top = "-60px";
+    advancedTexture.addControl(moveUpButton);
+
+    const moveDownButton = createMoveButton("moveDownButton", "↓", () => moveMesh('down'));
+    moveDownButton.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+    moveDownButton.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+    moveDownButton.left = "60px";
+    moveDownButton.top = "-10px";
+    advancedTexture.addControl(moveDownButton);
+
+    const moveLeftButton = createMoveButton("moveLeftButton", "←", () => moveMesh('left'));
+    moveLeftButton.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+    moveLeftButton.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+    moveLeftButton.left = "10px";
+    moveLeftButton.top = "-35px";
+    advancedTexture.addControl(moveLeftButton);
+
+    const moveRightButton = createMoveButton("moveRightButton", "→", () => moveMesh('right'));
+    moveRightButton.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+    moveRightButton.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+    moveRightButton.left = "110px";
+    moveRightButton.top = "-35px";
+    advancedTexture.addControl(moveRightButton);
+
+    // Add the green button back
+    const greenButton = BABYLON.GUI.Button.CreateSimpleButton("greenButton", "Green Button");
+    greenButton.width = "150px";
+    greenButton.height = "40px";
+    greenButton.color = "white";
+    greenButton.background = "green";
+    greenButton.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+    greenButton.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+    greenButton.paddingRight = "10px";
+    greenButton.paddingBottom = "10px";
+    greenButton.onPointerClickObservable.add(() => {
+        console.log('GreenButton pushed!');
+        // Add your green button functionality here
+    });
+    advancedTexture.addControl(greenButton);
+
+    // Add keyboard event listeners for movement
+    window.addEventListener("keydown", (event) => {
+        switch (event.key) {
+            case 'w':
+            case 'W':
+                moveMesh('up');
+                break;
+            case 's':
+            case 'S':
+                moveMesh('down');
+                break;
+            case 'a':
+            case 'A':
+                moveMesh('left');
+                break;
+            case 'd':
+            case 'D':
+                moveMesh('right');
+                break;
         }
     });
-    advancedTexture.addControl(moveBoxButton);
 
     scene.onBeforeRenderObservable.add(() => {
         sprites[0].material.setVector2("screenSize", new BABYLON.Vector2(engine.getRenderWidth(), engine.getRenderHeight()));
