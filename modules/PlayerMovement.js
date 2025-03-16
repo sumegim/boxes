@@ -111,8 +111,8 @@ function processInputQueue() {
 }
 
 function animateMesh(mesh, targetRotation, targetPosition) {
-    const frameRate = 10; // Reduce frame rate for faster animations
-    const animationSpeed = 4; // Increase speed multiplier for snappier animations
+    const frameRate = 60; // Reduce frame rate for faster animations
+    const animationSpeed = 6; // Increase speed multiplier for snappier animations
 
     // Calculate shortest rotation
     const currentRotationY = mesh.rotation.y;
@@ -169,6 +169,6 @@ function animateMesh(mesh, targetRotation, targetPosition) {
         mesh.position.x = Math.round(mesh.position.x);
         mesh.position.z = Math.round(mesh.position.z);
         isAnimating = false;
-        setTimeout(processInputQueue, 50); // Add a slight delay before processing the next input
+        setTimeout(processInputQueue, 10); // Add a slight delay before processing the next input
     });
 }
