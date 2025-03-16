@@ -236,12 +236,12 @@ function createDynamicTexture(scene, text, color) {
 function showFloatingMessage(message, scene, position, camera) {
     var tex = new BABYLON.DynamicTexture("messageTexture", {width: 512, height: 256}, scene);
     var font = "bold 44px monospace";
-    tex.drawText(message, null, 200, font, "black", "white", true, true);
+    tex.drawText(message, null, 100, font, "black", "white", true, true);
 
     var messageMaterial = new BABYLON.StandardMaterial("messageMat", scene);
     messageMaterial.diffuseTexture = tex;
     messageMaterial.backFaceCulling = false;
-    messageMaterial.alpha = 0.5; // Make the textbox transparent
+    messageMaterial.alpha = 0.7; // Make the textbox transparent
 
     var messageSprite = new BABYLON.MeshBuilder.CreatePlane("messageSprite", { width: 1, height: 0.5, sideOrientation: BABYLON.Mesh.DOUBLESIDE }, scene);
     messageSprite.material = messageMaterial;
