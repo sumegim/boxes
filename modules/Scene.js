@@ -4,6 +4,7 @@ import { createSprite } from './Sprite.js';
 import { setupUIManager } from './UIManager.js';
 import { loadModels } from './Models.js';
 import { World } from './World.js';
+import { createChessboard } from './Chessboard.js';
 
 export function createScene(engine, canvas) {
     const scene = new BABYLON.Scene(engine);
@@ -26,15 +27,12 @@ export function createScene(engine, canvas) {
     // Create the world object
     const world = new World(scene, camera, engine);
 
-    // Create boxes
-    const box1 = createBox(scene, "box1", "textures/crate.png", new BABYLON.Vector3(0, -1, 0));
-    const box2 = createBox(scene, "box2", "textures/crate.png", new BABYLON.Vector3(2, -1, 0));
-    world.addBox(box1);
-    world.addBox(box2);
+    // Create chessboard
+    createChessboard(scene, world);
 
     // Create sprites
-    const sprite1 = createSprite(scene, renderer, "?", new BABYLON.Vector3(0, -0.6, -0.8));
-    const sprite2 = createSprite(scene, renderer, "R", new BABYLON.Vector3(-0.5, 0.2, -0.2));
+    const sprite1 = createSprite(scene, renderer, "?", new BABYLON.Vector3(3.5, 0.5, -0.5));
+    const sprite2 = createSprite(scene, renderer, "R", new BABYLON.Vector3(-3.5, 0.5, -0.5));
     world.addSprite(sprite1);
     world.addSprite(sprite2);
 
