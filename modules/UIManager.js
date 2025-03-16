@@ -1,6 +1,7 @@
 import { showFloatingMessage } from './FloatingMessage.js';
 
-export function setupUIManager({ scene, sprites, camera, engine, meshes, box }) {
+export function setupUIManager(world) {
+    const { scene, camera, engine, sprites, meshes, box } = world;
     const manager = new BABYLON.GUI.GUI3DManager(scene);
 
     const pushButton1 = new BABYLON.GUI.MeshButton3D(sprites[0], "pushButton1");

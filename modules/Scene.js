@@ -3,6 +3,7 @@ import { createBox } from './Box.js';
 import { createSprite } from './Sprite.js';
 import { setupUIManager } from './UIManager.js';
 import { loadModels } from './Models.js';
+import { World } from './World.js';
 
 export function createScene(engine, canvas) {
     const scene = new BABYLON.Scene(engine);
@@ -22,25 +23,25 @@ export function createScene(engine, canvas) {
     // Custom shaders
     setupCustomShaders();
 
+    // Create the world object
+    const world = new World(scene, camera, engine);
+
     // Create boxes
     const box = createBox(scene, "box", "textures/crate.png", new BABYLON.Vector3(0, -1, 0));
+    world.setBox(box);
 
     // Create sprites
     const sprite1 = createSprite(scene, renderer, "?", new BABYLON.Vector3(0, -0.6, -0.8));
     const sprite2 = createSprite(scene, renderer, "R", new BABYLON.Vector3(-0.5, 0.2, -0.2));
+    world.addSprite(sprite1);
+    world.addSprite(sprite2);
 
     // Load models
     const meshes = loadModels(scene);
+    world.meshes = meshes;
 
     // Setup UI manager and buttons
-    setupUIManager({
-        scene,
-        sprites: [sprite1, sprite2],
-        camera,
-        engine,
-        meshes,
-        box
-    });
+    setupUIManager(world);
 
     return scene;
 }
