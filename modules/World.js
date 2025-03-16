@@ -5,7 +5,7 @@ export class World {
         this.engine = engine;
         this.sprites = [];
         this.meshes = {};
-        this.box = null;
+        this.boxes = [];
     }
 
     addSprite(sprite) {
@@ -16,7 +16,7 @@ export class World {
         this.meshes[name] = mesh;
     }
 
-    setBox(box) {
-        this.box = box;
+    addBox(box) {
+        this.boxes.push(box);
     }
 }

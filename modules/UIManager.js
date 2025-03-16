@@ -1,7 +1,7 @@
 import { showFloatingMessage } from './FloatingMessage.js';
 
 export function setupUIManager(world) {
-    const { scene, camera, engine, sprites, meshes, box } = world;
+    const { scene, camera, engine, sprites, meshes, boxes } = world;
     const manager = new BABYLON.GUI.GUI3DManager(scene);
 
     const pushButton1 = new BABYLON.GUI.MeshButton3D(sprites[0], "pushButton1");
@@ -26,7 +26,7 @@ export function setupUIManager(world) {
     // Create a 2D GUI
     const advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
 
-    // Add a new button to move the box
+    // Add a new button to move the first box
     const moveBoxButton = BABYLON.GUI.Button.CreateSimpleButton("moveBoxButton", "Move Box");
     moveBoxButton.width = "150px";
     moveBoxButton.height = "40px";
@@ -38,7 +38,9 @@ export function setupUIManager(world) {
     moveBoxButton.paddingBottom = "10px";
     moveBoxButton.onPointerClickObservable.add(() => {
         console.log('MoveBoxButton pushed!');
-        box.position.x += 1; // Move the box along the x-axis
+        if (boxes.length > 0) {
+            boxes[0].position.x += 1; // Move the first box along the x-axis
+        }
     });
     advancedTexture.addControl(moveBoxButton);
 
