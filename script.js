@@ -50,8 +50,8 @@ var createScene = function() {
     // createBox(scene, "box2", "textures/crate.png", new BABYLON.Vector3(-1.5, 0, -2));
 
     // Create sprites
-    var sprite1 = createSprite(scene, renderer, "1", new BABYLON.Vector3(0, -0.6, -0.8));
-    var sprite2 = createSprite(scene, renderer, "2", new BABYLON.Vector3(-0.5, 0.2, -0.2));
+    var sprite1 = createSprite(scene, renderer, "?", new BABYLON.Vector3(0, -0.6, -0.8));
+    var sprite2 = createSprite(scene, renderer, "R", new BABYLON.Vector3(-0.5, 0.2, -0.2));
 
     // Setup UI manager and buttons
     setupUIManager(scene, sprite1, sprite2, camera);
@@ -201,7 +201,8 @@ function setupUIManager(scene, sprite1, sprite2, camera) {
     pushButton2.scaling = new BABYLON.Vector3(0.5, 0.5, 0.5); // Scale to half size
     pushButton2.onPointerClickObservable.add(() => {
         console.log('PushButton2 pushed!');
-        showFloatingMessage("Hello World", scene, sprite2.position, camera);
+        // showFloatingMessage("Hello World", scene, sprite2.position, camera);
+        
     });
     manager.addControl(pushButton2);
 
