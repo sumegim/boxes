@@ -9,9 +9,22 @@ import { createChessboard } from './Chessboard.js';
 export function createScene(engine, canvas) {
     const scene = new BABYLON.Scene(engine);
 
-    // Add a hemispheric light
-    const light = new BABYLON.HemisphericLight("HemiLight", new BABYLON.Vector3(15, 20, 0), scene);
-    light.intensity = 2.0;
+    // Add multiple directional lights with different colors
+    const light1 = new BABYLON.DirectionalLight("DirectionalLight1", new BABYLON.Vector3(-1, -2, -1), scene);
+    light1.intensity = 1;
+    light1.diffuse = new BABYLON.Color3(1, 0.5, 0.5); // Red-ish light
+
+    const light2 = new BABYLON.DirectionalLight("DirectionalLight2", new BABYLON.Vector3(1, -2, -1), scene);
+    light2.intensity = 0.5;
+    light2.diffuse = new BABYLON.Color3(1, 1, 1); // White light
+
+    const light3 = new BABYLON.DirectionalLight("DirectionalLight3", new BABYLON.Vector3(-1, -2, 1), scene);
+    light3.intensity = 0.5;
+    light3.diffuse = new BABYLON.Color3(1, 1, 1); // White light
+
+    const light4 = new BABYLON.DirectionalLight("DirectionalLight4", new BABYLON.Vector3(1, -2, 1), scene);
+    light4.intensity = 0.5;
+    light4.diffuse = new BABYLON.Color3(1, 1, 1); // White light
 
     // Add an arc rotate camera
     const camera = new BABYLON.ArcRotateCamera("Camera", -Math.PI / 1.5, Math.PI / 3, 4, BABYLON.Vector3.Zero(), scene);
