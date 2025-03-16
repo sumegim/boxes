@@ -33,28 +33,79 @@ export function setupUIManager(world) {
             const forward = camera.getForwardRay().direction;
             const right = BABYLON.Vector3.Cross(forward, BABYLON.Axis.Y).normalize();
 
-            // Round the forward and right vectors to the nearest grid cell
-            forward.x = Math.round(forward.x);
-            forward.z = Math.round(forward.z);
-            right.x = Math.round(right.x);
-            right.z = Math.round(right.z);
+            // Determine the dominant direction the camera is facing
+            const absForwardX = Math.abs(forward.x);
+            const absForwardZ = Math.abs(forward.z);
+
+            let moveDirection;
+            if (absForwardX > absForwardZ) {
+                // Camera is mostly facing along the x-axis
+                moveDirection = forward.x > 0 ? 'x+' : 'x-';
+            } else {
+                // Camera is mostly facing along the z-axis
+                moveDirection = forward.z > 0 ? 'z+' : 'z-';
+            }
 
             switch (direction) {
                 case 'up':
-                    meshes.pawnMesh.position.z += stepSize;
-                    meshes.kingMesh.position.z += stepSize;
+                    if (moveDirection === 'x+') {
+                        meshes.pawnMesh.position.x += stepSize;
+                        meshes.kingMesh.position.x += stepSize;
+                    } else if (moveDirection === 'x-') {
+                        meshes.pawnMesh.position.x -= stepSize;
+                        meshes.kingMesh.position.x -= stepSize;
+                    } else if (moveDirection === 'z+') {
+                        meshes.pawnMesh.position.z += stepSize;
+                        meshes.kingMesh.position.z += stepSize;
+                    } else if (moveDirection === 'z-') {
+                        meshes.pawnMesh.position.z -= stepSize;
+                        meshes.kingMesh.position.z -= stepSize;
+                    }
                     break;
                 case 'down':
-                    meshes.pawnMesh.position.z -= stepSize;
-                    meshes.kingMesh.position.z -= stepSize;
+                    if (moveDirection === 'x+') {
+                        meshes.pawnMesh.position.x -= stepSize;
+                        meshes.kingMesh.position.x -= stepSize;
+                    } else if (moveDirection === 'x-') {
+                        meshes.pawnMesh.position.x += stepSize;
+                        meshes.kingMesh.position.x += stepSize;
+                    } else if (moveDirection === 'z+') {
+                        meshes.pawnMesh.position.z -= stepSize;
+                        meshes.kingMesh.position.z -= stepSize;
+                    } else if (moveDirection === 'z-') {
+                        meshes.pawnMesh.position.z += stepSize;
+                        meshes.kingMesh.position.z += stepSize;
+                    }
                     break;
                 case 'left':
-                    meshes.pawnMesh.position.x -= stepSize;
-                    meshes.kingMesh.position.x -= stepSize;
+                    if (moveDirection === 'x+') {
+                        meshes.pawnMesh.position.z += stepSize;
+                        meshes.kingMesh.position.z += stepSize;
+                    } else if (moveDirection === 'x-') {
+                        meshes.pawnMesh.position.z -= stepSize;
+                        meshes.kingMesh.position.z -= stepSize;
+                    } else if (moveDirection === 'z+') {
+                        meshes.pawnMesh.position.x -= stepSize;
+                        meshes.kingMesh.position.x -= stepSize;
+                    } else if (moveDirection === 'z-') {
+                        meshes.pawnMesh.position.x += stepSize;
+                        meshes.kingMesh.position.x += stepSize;
+                    }
                     break;
                 case 'right':
-                    meshes.pawnMesh.position.x += stepSize;
-                    meshes.kingMesh.position.x += stepSize;
+                    if (moveDirection === 'x+') {
+                        meshes.pawnMesh.position.z -= stepSize;
+                        meshes.kingMesh.position.z -= stepSize;
+                    } else if (moveDirection === 'x-') {
+                        meshes.pawnMesh.position.z += stepSize;
+                        meshes.kingMesh.position.z += stepSize;
+                    } else if (moveDirection === 'z+') {
+                        meshes.pawnMesh.position.x += stepSize;
+                        meshes.kingMesh.position.x += stepSize;
+                    } else if (moveDirection === 'z-') {
+                        meshes.pawnMesh.position.x -= stepSize;
+                        meshes.kingMesh.position.x -= stepSize;
+                    }
                     break;
             }
 
