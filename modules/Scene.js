@@ -23,7 +23,7 @@ export function createScene(engine, canvas) {
     setupCustomShaders();
 
     // Create boxes
-    createBox(scene, "box", "textures/crate.png", new BABYLON.Vector3(0, -1, 0));
+    const box = createBox(scene, "box", "textures/crate.png", new BABYLON.Vector3(0, -1, 0));
 
     // Create sprites
     const sprite1 = createSprite(scene, renderer, "?", new BABYLON.Vector3(0, -0.6, -0.8));
@@ -38,7 +38,8 @@ export function createScene(engine, canvas) {
         sprites: [sprite1, sprite2],
         camera,
         engine,
-        meshes
+        meshes,
+        box
     });
 
     return scene;

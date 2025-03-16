@@ -5,4 +5,6 @@ export function createBox(scene, name, texturePath, position) {
     const box = BABYLON.MeshBuilder.CreateBox(name, {}, scene);
     box.material = boxMaterial;
     box.position = position;
+
+    return box;
 }
