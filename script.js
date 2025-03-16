@@ -51,7 +51,7 @@ var createScene = function() {
 
     // Create sprites
     var sprite1 = createSprite(scene, renderer, "1", new BABYLON.Vector3(0, -0.6, -0.8));
-    var sprite2 = createSprite(scene, renderer, "56", new BABYLON.Vector3(-0.5, 0.2, -0.2));
+    var sprite2 = createSprite(scene, renderer, "2", new BABYLON.Vector3(-0.5, 0.2, -0.2));
 
     // Setup UI manager and buttons
     setupUIManager(scene, sprite1, sprite2, camera);
@@ -184,21 +184,24 @@ function setupUIManager(scene, sprite1, sprite2, camera) {
     var manager = new BABYLON.GUI.GUI3DManager(scene);
 
     var pushButton1 = new BABYLON.GUI.MeshButton3D(sprite1, "pushButton1");
+    pushButton1.scaling = new BABYLON.Vector3(0.5, 0.5, 0.5); // Scale to half size
     pushButton1.onPointerClickObservable.add(() => {
         console.log('PushButton1 pushed!');
         showFloatingMessage("Hello World", scene, sprite1.position, camera);
     });
-    pushButton1.onPointerEnterObservable.add(() => {
-        sprite1.material.setTexture("textureSampler", createDynamicTexture(scene, "1", "red"));
-    });
-    pushButton1.onPointerOutObservable.add(() => {
-        sprite1.material.setTexture("textureSampler", createDynamicTexture(scene, "1", "white"));
-    });
+    // pushButton1.onPointerEnterObservable.add(() => {
+    //     sprite1.material.setTexture("textureSampler", createDynamicTexture(scene, "1", "red"));
+    // });
+    // pushButton1.onPointerOutObservable.add(() => {
+    //     sprite1.material.setTexture("textureSampler", createDynamicTexture(scene, "1", "white"));
+    // });
     manager.addControl(pushButton1);
 
     var pushButton2 = new BABYLON.GUI.MeshButton3D(sprite2, "pushButton2");
+    pushButton2.scaling = new BABYLON.Vector3(0.5, 0.5, 0.5); // Scale to half size
     pushButton2.onPointerClickObservable.add(() => {
         console.log('PushButton2 pushed!');
+        showFloatingMessage("Hello World", scene, sprite2.position, camera);
     });
     manager.addControl(pushButton2);
 
@@ -238,14 +241,16 @@ function showFloatingMessage(message, scene, position, camera) {
     var messageMaterial = new BABYLON.StandardMaterial("messageMat", scene);
     messageMaterial.diffuseTexture = tex;
     messageMaterial.backFaceCulling = false;
+    messageMaterial.alpha = 0.5; // Make the textbox transparent
 
-    var messageSprite = new BABYLON.MeshBuilder.CreatePlane("messageSprite", { width: 1, height: 0.5 }, scene);
+    var messageSprite = new BABYLON.MeshBuilder.CreatePlane("messageSprite", { width: 1, height: 0.5, sideOrientation: BABYLON.Mesh.DOUBLESIDE }, scene);
     messageSprite.material = messageMaterial;
     messageSprite.position = position.clone();
     messageSprite.position.y += 0.5;
 
     messageSprite.onBeforeRenderObservable.add(() => {
         messageSprite.lookAt(camera.position);
+        messageSprite.rotate(BABYLON.Axis.Y, Math.PI, BABYLON.Space.LOCAL); // Flip the plane to correct the text orientation
     });
 
     setTimeout(() => {
