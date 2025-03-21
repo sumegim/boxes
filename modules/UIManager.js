@@ -44,28 +44,28 @@ export function setupUIManager(world) {
         return button;
     };
 
-    const moveUpButton = createMoveButton("moveUpButton", "↑", () => moveMesh('up'));
+    const moveUpButton = createMoveButton("moveUpButton", "w", () => moveMesh('up'));
     moveUpButton.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
     moveUpButton.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
     moveUpButton.left = "60px";
     moveUpButton.top = "-60px";
     advancedTexture.addControl(moveUpButton);
 
-    const moveDownButton = createMoveButton("moveDownButton", "↓", () => moveMesh('down'));
+    const moveDownButton = createMoveButton("moveDownButton", "s", () => moveMesh('down'));
     moveDownButton.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
     moveDownButton.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
     moveDownButton.left = "60px";
     moveDownButton.top = "-10px";
     advancedTexture.addControl(moveDownButton);
 
-    const moveLeftButton = createMoveButton("moveLeftButton", "←", () => moveMesh('left'));
+    const moveLeftButton = createMoveButton("moveLeftButton", "a", () => moveMesh('left'));
     moveLeftButton.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
     moveLeftButton.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
     moveLeftButton.left = "10px";
     moveLeftButton.top = "-35px";
     advancedTexture.addControl(moveLeftButton);
 
-    const moveRightButton = createMoveButton("moveRightButton", "→", () => moveMesh('right'));
+    const moveRightButton = createMoveButton("moveRightButton", "d", () => moveMesh('right'));
     moveRightButton.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
     moveRightButton.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
     moveRightButton.left = "110px";
